@@ -27,7 +27,6 @@ const rgbeLoader = new RGBELoader();
 rgbeLoader.load('https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/2k/rogland_clear_night_2k.hdr', (texture) => {
   texture.mapping = THREE.EquirectangularReflectionMapping;
   scene.environment = texture;
-  // scene.background = texture;
 });
 
 const starTexture = new THREE.TextureLoader().load('./stars.jpg');
@@ -36,13 +35,13 @@ const starGeometry = new THREE.SphereGeometry(30, 64, 64);
 const starMaterial = new THREE.MeshStandardMaterial({
   map: starTexture,
   transparent: true,
-  opacity: 0.75,
+  opacity: 0.8,
   side: THREE.BackSide,
 });
 const starSphere = new THREE.Mesh(starGeometry, starMaterial);
 scene.add(starSphere);
 
-const radius = 1.2;
+const radius = 1.3;
 const widthSegements = 64;
 const heightSegements = 32;
 const orbitRadius = 4;
@@ -53,6 +52,7 @@ const textures = [
   './neptune/color.png',
 ];
 const spheres = new THREE.Group();
+const spheresMesh = [];
 
 for (let i = 0; i < 4; i++) {
   const textureLoader = new THREE.TextureLoader();
@@ -63,6 +63,8 @@ for (let i = 0; i < 4; i++) {
   const material = new THREE.MeshStandardMaterial({ map: texture });
   const sphere = new THREE.Mesh(geometry, material);
 
+  spheresMesh.push(sphere);
+
   const angle = i * (Math.PI / 2);
   sphere.position.x = orbitRadius * Math.cos(angle);
   sphere.position.z = orbitRadius * Math.sin(angle);
@@ -71,16 +73,41 @@ for (let i = 0; i < 4; i++) {
 }
 
 spheres.rotation.x = 0.18;
-spheres.position.y = -0.5;
+spheres.position.y = -0.7;
 scene.add(spheres);
 
-// setInterval(() => {
-//   gsap.to(spheres.rotation, {
-//     y: `+=${Math.PI / 2}`,
-//     duration: 2,
-//     ease: 'power4.inOut',
-//   })
-// }, 2000)
+let lastWheelTime = 0;
+let scrollCount = 0;
+
+function handleWheel() {
+  const now = Date.now();
+  if (now - lastWheelTime >= 1500) {
+    lastWheelTime = now;
+    scrollCount = (scrollCount + 1) % 4;
+
+    const headings = document.querySelectorAll('.heading');
+    gsap.to(headings, {
+      y: `-=${100}%`,
+      duration: 1,
+      ease: 'power2.inOut',
+    })
+    gsap.to(spheres.rotation, {
+      y: `+=${Math.PI / 2}`,
+      duration: 1,
+      ease: 'power2.inOut',
+    })
+
+    if (scrollCount === 0) {
+      gsap.to(headings, {
+        y: 0,
+        duration: 1,
+        ease: 'power2.inOut',
+      })
+    }
+  }
+}
+
+window.addEventListener('wheel', handleWheel);
 
 // Handle window resize
 window.addEventListener('resize', () => {
@@ -89,9 +116,15 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+let clock = new THREE.Clock();
+
 // Animation loop
 function animate() {
   requestAnimationFrame(animate);
+  for (let i = 0; i < spheresMesh.length; i++) {
+    let sphere = spheresMesh[i];
+    sphere.rotation.y = clock.getElapsedTime() * 0.02;
+  }
   renderer.render(scene, camera);
 }
 animate();

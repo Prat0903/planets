@@ -7,7 +7,45 @@
   </head>
   <script src="https://cdn.tailwindcss.com"></script>
   <body>
-    <canvas class="w-full h-screen fixed" id="canvas"></canvas>
+    <div class="w-full h-screen overflow-hidden">
+      <div class="w-full h-screen absolute top-0 left-0 z-[2] text-white">
+        <nav
+          class="w-full px-8 py-5 flex justify-between items-center font-['Helvetica Now Display']"
+        >
+          <h3 class="text-sm md:text-lg">Planets</h3>
+          <div class="flex gap-4 text-xs md:gap-7 md:text-base">
+            <a href="#">Home</a>
+            <a href="#">View</a>
+            <a href="#">About</a>
+          </div>
+        </nav>
+        <div
+          class="absolute top-[10%] left-1/2 -translate-x-1/2 text-center font-['Constantia']"
+        >
+          <div class="w-full h-[60px] md:h-[80px] overflow-hidden">
+            <h1 class="heading h-full text-5xl md:text-7xl font-medium">
+              Earth
+            </h1>
+            <h1 class="heading h-full text-5xl md:text-7xl font-medium">
+              Venus
+            </h1>
+            <h1 class="heading h-full text-5xl md:text-7xl font-medium">
+              Neptune
+            </h1>
+            <h1 class="heading h-full text-5xl md:text-7xl font-medium">
+              Jupiter
+            </h1>
+          </div>
+          <p class="text-xs md:text-sm font-['Helvetica Now Display']">
+            Lorem ipsum dolor sit amet, consectetur adipisicing.
+          </p>
+          <div
+            class="w-full h-[2px] mt-1 mx-auto bg-gradient-to-r from-white/0 via-white to-white/0 rounded-full"
+          ></div>
+        </div>
+      </div>
+      <canvas id="canvas"></canvas>
+    </div>
     <script type="module" src="main.js"></script>
   </body>
 </html>
