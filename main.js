@@ -109,6 +109,23 @@ function handleWheel() {
 
 window.addEventListener('wheel', handleWheel);
 
+// Touch event support for mobile
+let touchStartY = null;
+window.addEventListener('touchstart', (e) => {
+  if (e.touches.length === 1) {
+    touchStartY = e.touches[0].clientY;
+  }
+});
+window.addEventListener('touchend', (e) => {
+  if (touchStartY !== null && e.changedTouches.length === 1) {
+    const touchEndY = e.changedTouches[0].clientY;
+    if (Math.abs(touchEndY - touchStartY) > 50) {
+      handleWheel();
+    }
+    touchStartY = null;
+  }
+});
+
 // Handle window resize
 window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
